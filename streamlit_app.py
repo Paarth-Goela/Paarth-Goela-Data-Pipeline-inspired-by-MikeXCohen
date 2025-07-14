@@ -3,15 +3,6 @@ Streamlit App for Neural Data Analysis Pipeline
 """
 
 import streamlit as st
-st.markdown("""
-    <style>
-    /* Make all text, labels, and help text white for dark theme */
-    label, .stSelectbox label, .stRadio label, .st-emotion-cache-1kyxreq, .st-emotion-cache-1v0mbdj, .st-emotion-cache-1c7y2kd, .st-emotion-cache-1r6slb0 {
-        color: #fff !important;
-        font-weight: 500 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -86,48 +77,330 @@ st.set_page_config(
 if 'theme' not in st.session_state:
     st.session_state.theme = 'dark'  # Default to dark theme
 
-# Dynamic CSS: Force dark theme with white text everywhere
+# Dynamic CSS: Theme-aware styling that works for both light and dark themes
 def get_theme_css(theme=None):
-    return """
+    if theme == 'light':
+        return """
 <style>
-    body, .stApp, .main, .block-container, .css-1d391kg, .css-fg4lbf, .sidebar-content, .stSidebar, .stSidebarContent, .css-1lcbmhc {
-        background-color: #0e1117 !important;
-        color: #fafafa !important;
+    /* Light theme colors */
+    :root {
+        --bg-color: #ffffff;
+        --secondary-bg: #f0f2f6;
+        --text-color: #262730;
+        --text-muted: #666666;
+        --border-color: #e0e0e0;
+        --accent-color: #1f77b4;
+        --accent-hover: #165b87;
+        --success-bg: #d4edda;
+        --success-text: #155724;
+        --success-border: #c3e6cb;
+        --info-bg: #d1ecf1;
+        --info-text: #0c5460;
+        --info-border: #bee5eb;
+        --warning-bg: #fff3cd;
+        --warning-text: #856404;
+        --warning-border: #ffeaa7;
+        --error-bg: #f8d7da;
+        --error-text: #721c24;
+        --error-border: #f5c6cb;
     }
-    .stMarkdown, .stText, .stHeader, .stSubheader, .stCaption, .stDataFrame, .stTable, .stMetric, .stInfo, .stSuccess, .stWarning, .stError, .stException, .stAlert, .stExpander, .stRadio, .stSelectbox, .stNumberInput, .stSlider, .stCheckbox, .stButton, .stDownloadButton, .stFileUploader, .stTextInput, .stTextArea, .stCode, .stJson, .stTabs, .stTab, .stForm, .stFormSubmitButton, .stColorPicker, .stDateInput, .stTimeInput, .stMultiSelect, .stProgress, .stSpinner, .stImage, .stAudio, .stVideo, .stPlotlyChart, .stPyplotChart, .stVegaLiteChart, .stAltairChart, .stBokehChart, .stDeckGlChart, .stGraphvizChart, .stMap, .stAgGrid, .stAgGridTable, .stAgGridCell, .stAgGridHeader, .stAgGridFooter, .stAgGridPagination, .stAgGridToolbar, .stAgGridFilter, .stAgGridSort, .stAgGridGroup, .stAgGridRow, .stAgGridColumn, .stAgGridColumnHeader, .stAgGridColumnFooter, .stAgGridColumnGroup, .stAgGridColumnGroupHeader, .stAgGridColumnGroupFooter, .stAgGridColumnGroupToolbar, .stAgGridColumnGroupFilter, .stAgGridColumnGroupSort, .stAgGridColumnGroupGroup, .stAgGridColumnGroupRow, .stAgGridColumnGroupColumn, .stAgGridColumnGroupColumnHeader, .stAgGridColumnGroupColumnFooter, .stAgGridColumnGroupColumnToolbar, .stAgGridColumnGroupColumnFilter, .stAgGridColumnGroupColumnSort, .stAgGridColumnGroupColumnGroup, .stAgGridColumnGroupColumnRow, .stAgGridColumnGroupColumnColumn, .stAgGridColumnGroupColumnColumnHeader, .stAgGridColumnGroupColumnColumnFooter, .stAgGridColumnGroupColumnColumnToolbar, .stAgGridColumnGroupColumnColumnFilter, .stAgGridColumnGroupColumnColumnSort, .stAgGridColumnGroupColumnColumnGroup, .stAgGridColumnGroupColumnColumnRow, .stAgGridColumnGroupColumnColumnColumn, .stAgGridColumnGroupColumnColumnColumnHeader, .stAgGridColumnGroupColumnColumnColumnFooter, .stAgGridColumnGroupColumnColumnColumnToolbar, .stAgGridColumnGroupColumnColumnColumnFilter, .stAgGridColumnGroupColumnColumnColumnSort, .stAgGridColumnGroupColumnColumnColumnGroup, .stAgGridColumnGroupColumnColumnColumnRow, .stAgGridColumnGroupColumnColumnColumnColumn {
-        color: #fafafa !important;
+    
+    /* Apply light theme colors */
+    body, .stApp, .main, .block-container {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
     }
+    
+    .stSidebar, .stSidebarContent {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    /* Text elements */
+    .stMarkdown, .stText, .stHeader, .stSubheader, .stCaption, 
+    .stDataFrame, .stTable, .stMetric, .stInfo, .stSuccess, 
+    .stWarning, .stError, .stException, .stAlert, .stExpander,
+    .stRadio, .stSelectbox, .stNumberInput, .stSlider, .stCheckbox,
+    .stTextInput, .stTextArea, .stCode, .stJson, .stTabs, .stTab,
+    .stForm, .stColorPicker, .stDateInput, .stTimeInput, .stMultiSelect,
+    .stProgress, .stSpinner, .stImage, .stAudio, .stVideo,
+    .stPlotlyChart, .stPyplotChart, .stVegaLiteChart, .stAltairChart,
+    .stBokehChart, .stDeckGlChart, .stGraphvizChart, .stMap {
+        color: var(--text-color) !important;
+    }
+    
+    /* Labels and form elements */
+    label, .stSelectbox label, .stRadio label, .st-emotion-cache-1kyxreq, 
+    .st-emotion-cache-1v0mbdj, .st-emotion-cache-1c7y2kd, .st-emotion-cache-1r6slb0 {
+        color: var(--text-color) !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Buttons */
     .stButton>button, .stDownloadButton>button {
-        background-color: #1f77b4;
-        color: #fafafa;
+        background-color: var(--accent-color);
+        color: white;
         border-radius: 0.5rem;
         padding: 0.5rem 1rem;
-        border: 1px solid #4a4a4a;
+        border: 1px solid var(--border-color);
     }
+    
     .stButton>button:hover, .stDownloadButton>button:hover {
-        background-color: #165b87;
-        color: #fafafa;
-        border-color: #666666;
+        background-color: var(--accent-hover);
+        color: white;
+        border-color: var(--text-muted);
     }
+    
+    /* Info boxes */
     .info-box {
-        background-color: #1e3a5f;
-        color: #e6f3ff;
+        background-color: var(--info-bg);
+        color: var(--info-text);
         padding: 1rem;
         border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
+        border-left: 4px solid var(--accent-color);
         margin: 1rem 0;
     }
+    
     .success-box {
-        background-color: #1e4d2e;
-        color: #e6ffe6;
+        background-color: var(--success-bg);
+        color: var(--success-text);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid #28a745;
+        margin: 1rem 0;
+    }
+    
+    /* Plotly charts */
+    .js-plotly-plot {
+        background-color: var(--bg-color) !important;
+    }
+    
+    /* Watermark */
+    .end-watermark {
+        color: rgba(38, 39, 48, 0.4);
+        font-size: 14px;
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-top: 1px solid rgba(38, 39, 48, 0.1);
+    }
+    
+    /* Dataframes */
+    .dataframe {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    .css-1wivap2 {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    /* Additional compatibility fixes for light theme */
+    .stSelectbox > div > div {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+    }
+    .stSelectbox > div > div > div {
+        color: var(--text-color) !important;
+    }
+    .stRadio > div > div > label {
+        color: var(--text-color) !important;
+    }
+    .stNumberInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stTextInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stTextArea > div > div > textarea {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stSlider > div > div > div > div {
+        background-color: var(--accent-color) !important;
+    }
+    .stCheckbox > div > div > label {
+        color: var(--text-color) !important;
+    }
+    .stFileUploader > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stProgress > div > div > div {
+        background-color: var(--accent-color) !important;
+    }
+    .stExpander > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div[data-baseweb="tab"] {
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div[data-baseweb="tab"][aria-selected="true"] {
+        background-color: var(--accent-color) !important;
+        color: white !important;
+    }
+    .plotly-graph-div {
+        background-color: var(--bg-color) !important;
+    }
+    .stDataFrame > div > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stMetric > div > div > div {
+        color: var(--text-color) !important;
+    }
+    .stAlert > div > div {
+        background-color: var(--info-bg) !important;
+        color: var(--info-text) !important;
+        border-color: var(--info-border) !important;
+    }
+    .stSuccess > div > div {
+        background-color: var(--success-bg) !important;
+        color: var(--success-text) !important;
+        border-color: var(--success-border) !important;
+    }
+    .stWarning > div > div {
+        background-color: var(--warning-bg) !important;
+        color: var(--warning-text) !important;
+        border-color: var(--warning-border) !important;
+    }
+    .stError > div > div {
+        background-color: var(--error-bg) !important;
+        color: var(--error-text) !important;
+        border-color: var(--error-border) !important;
+    }
+    .stCode > div > div > pre {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stJson > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stMultiSelect > div > div > div {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+    }
+    .stDateInput > div > div > input,
+    .stTimeInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+</style>
+"""
+    else:
+        return """
+<style>
+    /* Dark theme colors */
+    :root {
+        --bg-color: #0e1117;
+        --secondary-bg: #262730;
+        --text-color: #fafafa;
+        --text-muted: #cccccc;
+        --border-color: #4a4a4a;
+        --accent-color: #1f77b4;
+        --accent-hover: #165b87;
+        --success-bg: #1e4d2e;
+        --success-text: #e6ffe6;
+        --success-border: #2ca02c;
+        --info-bg: #1e3a5f;
+        --info-text: #e6f3ff;
+        --info-border: #1f77b4;
+        --warning-bg: #4d3a1e;
+        --warning-text: #ffe6cc;
+        --warning-border: #ffa500;
+        --error-bg: #4d1e1e;
+        --error-text: #ffe6e6;
+        --error-border: #ff4444;
+    }
+    
+    /* Apply dark theme colors */
+    body, .stApp, .main, .block-container {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+    }
+    
+    .stSidebar, .stSidebarContent {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    /* Text elements */
+    .stMarkdown, .stText, .stHeader, .stSubheader, .stCaption, 
+    .stDataFrame, .stTable, .stMetric, .stInfo, .stSuccess, 
+    .stWarning, .stError, .stException, .stAlert, .stExpander,
+    .stRadio, .stSelectbox, .stNumberInput, .stSlider, .stCheckbox,
+    .stTextInput, .stTextArea, .stCode, .stJson, .stTabs, .stTab,
+    .stForm, .stColorPicker, .stDateInput, .stTimeInput, .stMultiSelect,
+    .stProgress, .stSpinner, .stImage, .stAudio, .stVideo,
+    .stPlotlyChart, .stPyplotChart, .stVegaLiteChart, .stAltairChart,
+    .stBokehChart, .stDeckGlChart, .stGraphvizChart, .stMap {
+        color: var(--text-color) !important;
+    }
+    
+    /* Labels and form elements */
+    label, .stSelectbox label, .stRadio label, .st-emotion-cache-1kyxreq, 
+    .st-emotion-cache-1v0mbdj, .st-emotion-cache-1c7y2kd, .st-emotion-cache-1r6slb0 {
+        color: var(--text-color) !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Buttons */
+    .stButton>button, .stDownloadButton>button {
+        background-color: var(--accent-color);
+        color: var(--text-color);
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+    }
+    
+    .stButton>button:hover, .stDownloadButton>button:hover {
+        background-color: var(--accent-hover);
+        color: var(--text-color);
+        border-color: var(--text-muted);
+    }
+    
+    /* Info boxes */
+    .info-box {
+        background-color: var(--info-bg);
+        color: var(--info-text);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid var(--accent-color);
+        margin: 1rem 0;
+    }
+    
+    .success-box {
+        background-color: var(--success-bg);
+        color: var(--success-text);
         padding: 1rem;
         border-radius: 0.5rem;
         border-left: 4px solid #2ca02c;
         margin: 1rem 0;
     }
+    
+    /* Plotly charts */
     .js-plotly-plot {
-        background-color: #0e1117 !important;
+        background-color: var(--bg-color) !important;
     }
+    
+    /* Watermark */
     .end-watermark {
         color: rgba(250, 250, 250, 0.4);
         font-size: 14px;
@@ -138,13 +411,121 @@ def get_theme_css(theme=None):
         padding-bottom: 20px;
         border-top: 1px solid rgba(250, 250, 250, 0.1);
     }
+    
+    /* Dataframes */
     .dataframe {
-        background-color: #262730 !important;
-        color: #fafafa !important;
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
     }
+    
     .css-1wivap2 {
-        background-color: #262730 !important;
-        color: #fafafa !important;
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    /* Additional compatibility fixes for dark theme */
+    .stSelectbox > div > div {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+    }
+    .stSelectbox > div > div > div {
+        color: var(--text-color) !important;
+    }
+    .stRadio > div > div > label {
+        color: var(--text-color) !important;
+    }
+    .stNumberInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stTextInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stTextArea > div > div > textarea {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stSlider > div > div > div > div {
+        background-color: var(--accent-color) !important;
+    }
+    .stCheckbox > div > div > label {
+        color: var(--text-color) !important;
+    }
+    .stFileUploader > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stProgress > div > div > div {
+        background-color: var(--accent-color) !important;
+    }
+    .stExpander > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div[data-baseweb="tab"] {
+        color: var(--text-color) !important;
+    }
+    .stTabs > div > div > div > div[data-baseweb="tab"][aria-selected="true"] {
+        background-color: var(--accent-color) !important;
+        color: white !important;
+    }
+    .plotly-graph-div {
+        background-color: var(--bg-color) !important;
+    }
+    .stDataFrame > div > div > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stMetric > div > div > div {
+        color: var(--text-color) !important;
+    }
+    .stAlert > div > div {
+        background-color: var(--info-bg) !important;
+        color: var(--info-text) !important;
+        border-color: var(--info-border) !important;
+    }
+    .stSuccess > div > div {
+        background-color: var(--success-bg) !important;
+        color: var(--success-text) !important;
+        border-color: var(--success-border) !important;
+    }
+    .stWarning > div > div {
+        background-color: var(--warning-bg) !important;
+        color: var(--warning-text) !important;
+        border-color: var(--warning-border) !important;
+    }
+    .stError > div > div {
+        background-color: var(--error-bg) !important;
+        color: var(--error-text) !important;
+        border-color: var(--error-border) !important;
+    }
+    .stCode > div > div > pre {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+    .stJson > div > div {
+        background-color: var(--secondary-bg) !important;
+        color: var(--text-color) !important;
+    }
+    .stMultiSelect > div > div > div {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+    }
+    .stDateInput > div > div > input,
+    .stTimeInput > div > div > input {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
     }
 </style>
 """
@@ -163,6 +544,10 @@ def set_matplotlib_theme(theme):
         plt.rcParams['axes.labelcolor'] = '#fafafa'
         plt.rcParams['xtick.color'] = '#fafafa'
         plt.rcParams['ytick.color'] = '#fafafa'
+        plt.rcParams['axes.edgecolor'] = '#4a4a4a'
+        plt.rcParams['axes.grid'] = True
+        plt.rcParams['grid.color'] = '#4a4a4a'
+        plt.rcParams['grid.alpha'] = 0.3
     else:
         plt.style.use('default')
         plt.rcParams['figure.facecolor'] = '#ffffff'
@@ -171,6 +556,10 @@ def set_matplotlib_theme(theme):
         plt.rcParams['axes.labelcolor'] = '#262730'
         plt.rcParams['xtick.color'] = '#262730'
         plt.rcParams['ytick.color'] = '#262730'
+        plt.rcParams['axes.edgecolor'] = '#e0e0e0'
+        plt.rcParams['axes.grid'] = True
+        plt.rcParams['grid.color'] = '#e0e0e0'
+        plt.rcParams['grid.alpha'] = 0.5
 
 # Apply matplotlib theme
 set_matplotlib_theme(st.session_state.theme)
